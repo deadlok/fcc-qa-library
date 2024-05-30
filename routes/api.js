@@ -114,6 +114,8 @@ module.exports = function (app) {
       let comment = req.body.comment;
       let Book = mongoose.model('Book', bookSchema)
       let Comment = mongoose.model('Comment', commentSchema)
+      console.log('bookid: ' + bookid)
+      console.log('comment: ' + comment)
       //json res format same as .get
 
       if (!comment) {
