@@ -168,18 +168,20 @@ module.exports = function (app) {
     })
     .delete(async function(req, res){
       let bookid = req.params.id;
-      let Book = mongoose.model('Book', bookSchema)
-      let Comment = mongoose.model('Comment', commentSchema)
+      let Book = mongoose.model('Book', bookSchema);
+      let Comment = mongoose.model('Comment', commentSchema);
       //if successful response will be 'delete successful'
       try {
         await Book.findOneAndDelete({_id: bookid})
-        .then(()=>{
-          Comment.deleteMany({bookid:bookid})
-          res.send('delete successful')
+        .then(async ()=>{
+          await Comment.deleteMany({bookid:bookid})
+          .then(()=>{
+            res.send('delete successful');
+          })
       })
       } catch(e) {
         console.log(e)
-        res.send('no book exists')
+        res.send('no book exists');
       }
     });
 };
