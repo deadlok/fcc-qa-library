@@ -97,7 +97,7 @@ module.exports = function (app) {
             let comments = [];
             await Comment.find({bookid:bookid}).then(
               docs => {
-                docs.map((comment) => comments.push(comment));
+                docs.map((cmt) => comments.push(cmt.comment));
               }
             )
             res.json({_id:bookid, title:doc.title, comments: comments})
@@ -110,7 +110,6 @@ module.exports = function (app) {
     // add comment for a book
     .post(async function(req, res){
       let bookid = req.params.id;
-      console.log('bookid = ' + bookid )
       let comment = req.body.comment;
       let Book = mongoose.model('Book', bookSchema)
       let Comment = mongoose.model('Comment', commentSchema)
@@ -134,7 +133,7 @@ module.exports = function (app) {
               let comments = []
               await Comment.find({bookid:bookid}).then(
                 docs => {
-                  docs.map((comment) => comments.push(comment));
+                  docs.map((cmt) => comments.push(cmt.comment));
                   commentCnt = docs.length
                 }
               )
