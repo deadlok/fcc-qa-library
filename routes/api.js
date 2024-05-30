@@ -83,9 +83,9 @@ module.exports = function (app) {
   .delete(async function(req, res){
     //if successful response will be 'complete delete successful'
     try {
-      await Book.remove({})
+      await Book.deleteMany({})
       .then(()=>{
-        Comment.remove({})
+        Comment.deleteMany({})
         res.send('complete delete successful')
     })
     } catch(e) {
