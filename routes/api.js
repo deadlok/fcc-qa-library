@@ -81,12 +81,14 @@ module.exports = function (app) {
 
   })
   .delete(async function(req, res){
+    let Book = mongoose.model('Book', bookSchema)
+    let Comment = mongoose.model('Comment', commentSchema)
     //if successful response will be 'complete delete successful'
     try {
       await Book.deleteMany({})
-      .then(()=>{
-        Comment.deleteMany({})
-        res.send('complete delete successful')
+      .then(async ()=>{
+        await Comment.deleteMany({})
+        .then(()=>res.send('complete delete successful'))
     })
     } catch(e) {
       console.log(e)
