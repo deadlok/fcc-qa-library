@@ -117,7 +117,6 @@ module.exports = function (app) {
       //json res format same as .get
 
       if (!comment) {
-        console.log('missing comment')
         res.send('missing required field comment')
       }
       try {
@@ -142,7 +141,7 @@ module.exports = function (app) {
             book.commentCnt = commentCnt
             await book.save()
 
-            res.json({_id:bookid, title:doc.title, comments: comments})
+            res.json({_id:bookid, title:book.title, comments: comments})
 
           } else {
             res.send('no book exists')
