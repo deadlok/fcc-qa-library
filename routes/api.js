@@ -80,8 +80,18 @@ module.exports = function (app) {
     )
 
   })
-  .delete(function(req, res){
+  .delete(async function(req, res){
     //if successful response will be 'complete delete successful'
+    try {
+      await Book.remove({})
+      .then(()=>{
+        Comment.remove({})
+        res.send('complete delete successful')
+    })
+    } catch(e) {
+      console.log(e)
+      res.send('no book exists')
+    }
   });
 
 
@@ -154,8 +164,20 @@ module.exports = function (app) {
         }
       }
     })
-    .delete(function(req, res){
+    .delete(async function(req, res){
       let bookid = req.params.id;
+      let Book = mongoose.model('Book', bookSchema)
+      let Comment = mongoose.model('Comment', commentSchema)
       //if successful response will be 'delete successful'
+      try {
+        await Book.findOneAndDelete({_id: bookid})
+        .then(()=>{
+          Comment.deleteMany({bookid:bookid})
+          res.send('delete successful')
+      })
+      } catch(e) {
+        console.log(e)
+        res.send('no book exists')
+      }
     });
 };
