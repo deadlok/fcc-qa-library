@@ -92,7 +92,7 @@ module.exports = function (app) {
       let Comment = mongoose.model('Comment', commentSchema)
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
       try{
-          await Book.findById({_id: bookid})
+          await Book.findById(bookid)
           .then(async doc => {
             let comments = [];
             await Comment.find({bookid:bookid}).then(
@@ -118,40 +118,40 @@ module.exports = function (app) {
 
       if (!comment) {
         res.send('missing required field comment')
+      } else {
+        try {
+          await Book.findById(bookid)
+          .then( async book => {
+            if (book) {
+              let commentCnt = 0
+              //////// Save new comment ///////
+              let newComment = new Comment({bookid:bookid, comment: comment});
+              await newComment.save()
+
+              //////// Find all comments ///////
+              let comments = []
+              await Comment.find({bookid:bookid}).then(
+                docs => {
+                  docs.map((comment) => comments.push(comment));
+                  commentCnt = docs.length
+                }
+              )
+
+              ///////// Update count for the book /////////
+              book.commentCnt = commentCnt
+              await book.save()
+
+              res.json({_id:bookid, title:book.title, comments: comments})
+
+            } else {
+              res.send('no book exists')
+            }
+          })
+        } catch(e) {
+          console.log(e)
+          res.send('cannot create comment')
+        }
       }
-      try {
-        await Book.findById(bookid)
-        .then( async book => {
-          if (book) {
-            let commentCnt = 0
-            //////// Save new comment ///////
-            let newComment = new Comment({bookid:{bookid}, comment: comment});
-            await newComment.save()
-
-            //////// Find all comments ///////
-            let comments = []
-            await Comment.find({bookid:bookid}).then(
-              docs => {
-                docs.map((comment) => comments.push(comment));
-                commentCnt = docs.length
-              }
-            )
-
-            ///////// Update count for the book /////////
-            book.commentCnt = commentCnt
-            await book.save()
-
-            res.json({_id:bookid, title:book.title, comments: comments})
-
-          } else {
-            res.send('no book exists')
-          }
-        })
-      } catch(e) {
-        console.log(e)
-        res.send('cannot create comment')
-      }
-
     })
     .delete(function(req, res){
       let bookid = req.params.id;
