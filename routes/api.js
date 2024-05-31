@@ -173,11 +173,15 @@ module.exports = function (app) {
       //if successful response will be 'delete successful'
       try {
         await Book.findOneAndDelete({_id: bookid})
-        .then(async ()=>{
-          await Comment.deleteMany({bookid:bookid})
-          .then(()=>{
-            res.send('delete successful');
-          })
+        .then(async (bk)=>{
+          if (bk) {
+            await Comment.deleteMany({bookid:bookid})
+            .then(()=>{
+              res.send('delete successful');
+            })
+          } else {
+            res.send('no book exists');
+          }
       })
       } catch(e) {
         console.log(e)
