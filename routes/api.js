@@ -106,16 +106,20 @@ module.exports = function (app) {
       try{
           await Book.findById(bookid)
           .then(async doc => {
-            let comments = [];
-            await Comment.find({bookid:bookid}).then(
-              docs => {
-                docs.map((cmt) => comments.push(cmt.comment));
-              }
-            )
-            res.json({_id:bookid, title:doc.title, comments: comments})
+            if (doc) {
+              let comments = [];
+              await Comment.find({bookid:bookid}).then(
+                docs => {
+                  docs.map((cmt) => comments.push(cmt.comment));
+                }
+              )
+              res.json({_id:bookid, title:doc.title, comments: comments})
+            } else {
+              res.send('no book exists')
+            }
           })
       } catch(e) {
-          console.log(e)
+          //console.log(e)
           res.send('no book exists')
       }
     })
